@@ -1,7 +1,6 @@
 # IoT Challenge #2 — Packet Sniffing
 
 **Course:** Internet of Things — Politecnico di Milano (2025–2026)  
-**Authors:** SeyedAman Zargari (11109586), Amirhossein Dibaj (11109540)
 
 ## Overview
 
