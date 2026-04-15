@@ -30,9 +30,9 @@ ESP32-Packet-Sniffing-Challenge-IoT-Assignment-2/
 
 ## Requirements
 
-- **tshark** (Wireshark CLI) — tested with v4.2.2
+- **tshark** (Wireshark CLI)
 - **Python 3.10+**
-- **matplotlib** (for CQ8 histogram)
+- **matplotlib**
 
 ```bash
 # Ubuntu/Debian
