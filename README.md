@@ -9,7 +9,7 @@ Analysis of two packet capture files (A.pcapng and B.pcapng) containing CoAP, MQ
 ## Repository Structure
 
 ```
-iot-challenge-2/
+ESP32-Packet-Sniffing-Challenge-IoT-Assignment-2/
 ├── README.md
 ├── scripts/
 │   ├── cq1_coap_delete.py          # CQ1: NON DELETE requests to coap.me
