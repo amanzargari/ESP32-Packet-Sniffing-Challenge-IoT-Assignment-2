@@ -21,14 +21,12 @@ ESP32-Packet-Sniffing-Challenge-IoT-Assignment-2/
 ├── figures/
 │   └── cq8_histogram.png           # Generated histogram for CQ8
 ├── data/
-│   ├── A.pcapng                    # Capture file A (not included, see below)
-│   └── B.pcapng                    # Capture file B (not included, see below)
+│   ├── A.pcapng                    # Capture file A
+│   └── B.pcapng                    # Capture file B
 └── report/
     ├── Challenge.pdf               # Part 1 report (CQ1–CQ8)
     └── Exercise.pdf                # Part 2 report (EQ1–EQ2)
 ```
-
-> **Note:** The `.pcapng` files are not included in this repository. Place them in `data/` to run the scripts.
 
 ## Requirements
 
