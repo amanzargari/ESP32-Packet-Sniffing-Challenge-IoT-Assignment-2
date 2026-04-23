@@ -1,88 +1,85 @@
-# IoT Challenge #2 — Packet Sniffing
+# IoT Challenge 2 — Packet Sniffing
 
-**Course:** Internet of Things — Politecnico di Milano (2025–2026)  
+Solution to **Challenge #2** of the *Internet of Things* course at **Politecnico di Milano** (A.Y. 2025–2026, ANTLab). The challenge is split in two parts:
 
-## Overview
+- **Part 1** — Analysis of two packet captures (`A.pcapng`, `B.pcapng`) with CoAP, MQTT and MQTT-SN traffic (questions CQ1–CQ8).
+- **Part 2** — Energy-consumption exercise comparing CoAP and MQTT for a battery-powered sensor/actuator pair (questions EQ1, EQ2).
 
-Analysis of two packet capture files (A.pcapng and B.pcapng) containing CoAP, MQTT, and MQTT-SN traffic, plus a theoretical energy comparison between CoAP and MQTT for a smart building IoT system.
+## Authors
 
-## Repository Structure
+| Name | Person Code |
+|------|-------------|
+| Seyedaman Zargari | 11109586 |
+| Amirhossein Dibaj | 11109540 |
+
+## Repository structure
 
 ```
-ESP32-Packet-Sniffing-Challenge-IoT-Assignment-2/
-├── README.md
-├── scripts/
-│   ├── cq1_coap_delete.py          # CQ1: NON DELETE requests to coap.me
-│   ├── cq2_coap_post_put.py        # CQ2: Unsuccessful CON POST/PUT matching
-│   ├── cq3_observe.py              # CQ3: Observe notifications analysis
-│   ├── cq4_mqttsn.py               # CQ4: MQTT-SN broker on port 1885
-│   ├── cq5_6_7_mqtt.py             # CQ5-7: MQTT last will, retain, wildcards
-│   └── cq8_topic_layers.py         # CQ8: Topic depth histogram (both files)
-├── figures/
-│   └── cq8_histogram.png           # Generated histogram for CQ8
+.
+├── Challenge2.pdf        # Original challenge text (questions CQ1–CQ8, EQ1, EQ2)
+├── Challenge.pdf         # Part 1 solution — PCAP analysis (CQ1–CQ8)
+├── Exercise.pdf          # Part 2 solution — energy exercise (EQ1, EQ2)
 ├── data/
-│   ├── A.pcapng                    # Capture file A
-│   └── B.pcapng                    # Capture file B
-└── report/
-    ├── Challenge.pdf               # Part 1 report (CQ1–CQ8)
-    └── Exercise.pdf                # Part 2 report (EQ1–EQ2)
+│   ├── A.pcapng          # Capture used for CQ1–CQ4 and CQ8a
+│   └── B.pcapng          # Capture used for CQ5–CQ7 and CQ8b
+└── README.md
 ```
 
-## Requirements
+## Part 1 — PCAP analysis
 
-- **tshark** (Wireshark CLI)
-- **Python 3.10+**
-- **matplotlib**
+All filters are standard Wireshark display filters. Counting across many packets was done with `tshark` piped into short Python snippets. Malformed packets are ignored throughout, as required by the challenge.
 
-```bash
-# Ubuntu/Debian
-sudo apt install tshark
-pip install matplotlib
-```
+| # | Question (short) | Answer |
+|---|------------------|--------|
+| CQ1a | NON CoAP DELETE to `coap.me` with a successful response | MID **30800** (`/validate`) |
+| CQ1b | Of those, how many actually deleted the resource | **0** |
+| CQ2  | Resources with X = Y > 0 unique unsuccessful CON POST/PUT | **1** (`/dining_room`) |
+| CQ3a | Separate observe notifications on `/dining_room/temperature` | **10** |
+| CQ3b | Of those, how many are wasted (no client ACK) | **5** |
+| CQ4  | MQTT-SN messages received by clients from local broker on port 1885 | **0** |
+| CQ5  | Subscribers that received a Will via a wildcard subscription | **1** |
+| CQ6a | Clients erasing a retained value on HiveMQ | **5** |
+| CQ6b | Of those, how many have a client-ID strictly longer than 7 B | **2** |
+| CQ7  | SUBSCRIBE to local broker with ≥ 2 wildcards | **9** |
+| CQ8a | Total PUBLISH to local broker in A.pcapng | **439** |
+| CQ8b | Total PUBLISH to local broker in B.pcapng | **534** |
 
-## Quick Start
+All filters, token-matching tables and justifications are in `Challenge.pdf`. The CQ8 plotting script (`cq8_plot.py` — `tshark` + `matplotlib`) is embedded in the report.
 
-```bash
-# Run all scripts from the repo root
-python3 scripts/cq1_coap_delete.py data/A.pcapng
-python3 scripts/cq2_coap_post_put.py data/A.pcapng
-python3 scripts/cq3_observe.py data/A.pcapng
-python3 scripts/cq4_mqttsn.py data/A.pcapng
-python3 scripts/cq5_6_7_mqtt.py data/B.pcapng
-python3 scripts/cq8_topic_layers.py data/A.pcapng data/B.pcapng
-```
+## Part 2 — Energy exercise
 
-## Answers Summary
+Battery-powered temperature sensor (publishes every 2 min) and battery-powered fan actuator, communicating either directly via CoAP (CON) or via a mains-powered MQTT gateway (QoS 1). Energy per bit: E_TX = 50 nJ/bit, E_RX = 58 nJ/bit.
 
-### Part 1 — PCAP Analysis
+### EQ1 — Hourly communication energy (sensor + actuator)
 
-| Question | Answer | Description |
-|----------|--------|-------------|
-| CQ1a | MID 30800 | 1 NON DELETE to coap.me with successful (2.02) response |
-| CQ1b | 0 | Resource `/validate` still accessible after DELETE |
-| CQ2 | 1 | `/dining_room` has X=Y=1 (POST 4.00, PUT 4.04) |
-| CQ3a | 11 | Unique observe notifications (by MID) |
-| CQ3b | 5 | Unacknowledged CON notifications (MIDs 54,62,74,87,90) |
-| CQ4 | 0 | Broker on port 1885 not running (ICMP port unreachable) |
-| CQ5 | 1 | `university/#` on stream 10 matches will topic |
-| CQ6a | 3 | Streams 1, 22, 43 sent empty retained publishes to HiveMQ |
-| CQ6b | 1 | `giuxfijwus` (10 bytes) > 7 |
-| CQ7 | 9 | Subscribe requests with ≥2 wildcards to local broker |
-| CQ8a | 439 | MQTT publishes to local broker in A.pcapng |
-| CQ8b | 534 | MQTT publishes to local broker in B.pcapng |
+| Protocol | Sensor/h | Actuator/h | **Total/h** |
+|----------|----------|------------|-------------|
+| CoAP (direct, CON) | 1048.80 µJ | 1154.40 µJ | **2203.20 µJ** |
+| MQTT (via gateway, QoS 1) | 1643.20 µJ | 1742.72 µJ | **3385.92 µJ** |
 
-### Part 2 — Energy Exercise
+CoAP is ≈ 1.54× cheaper because it avoids the MQTT connection/subscription overhead and uses a 15 B piggybacked ACK instead of a 50 B PUBACK.
 
-| Question | Answer |
-|----------|--------|
-| EQ1a (CoAP) | 2203.20 µJ |
-| EQ1b (MQTT) | 5498.72 µJ |
-| EQ2 | MQTT with `retain=1`, `clean_session=1`, QoS 1 |
+### EQ2 — Actuator wakes up every 30 min
 
-## Key Findings
+**Chosen protocol: MQTT** with `retain = 1`, `QoS = 1`, `cleanSession = false`. Direct CoAP CON would fail every sensor cycle while the actuator sleeps (RTO retransmits ⇒ wasted sensor energy, no delivery). With retained messages + persistent session the actuator wakes every 30 min, skips re-subscribing, and receives the latest value plus any queued updates. Metric optimised: actuator-side energy per hour and delivery reliability.
 
-- **CQ1:** coap.me's `/validate` endpoint accepts DELETE (responds 2.02) but does not actually remove the resource — a subsequent GET still returns 2.05 Content.
-- **CQ3:** The CoAP observe server continues sending CON notifications even after the client stops ACKing, violating RFC 7641 §4.5.
-- **CQ4:** No MQTT-SN broker was running on port 1885; all 219 client messages received ICMP Port Unreachable.
-- **CQ8:** B.pcapng shows broader topic depth distribution (layers 1–4) compared to A.pcapng (layers 2–4 only), with consistently higher message counts.
-- **EQ2:** With a sleeping actuator (30-min wake cycle), MQTT is preferred over CoAP despite higher baseline energy cost, because CoAP fails 93% of messages due to retransmission timeouts while MQTT's retain flag guarantees the actuator always receives the latest reading.
+Full derivations in `Exercise.pdf`.
+
+## Tools used
+
+- **Wireshark / tshark 4.x** — display filters, MQTT-SN dissector enabled on UDP port 1885 (*Edit → Preferences → Protocols → MQTT-SN*).
+- **Python 3** with `matplotlib` and `subprocess` — CQ8 histogram and ancillary token-matching.
+
+## Reproducing the results
+
+1. Open `data/A.pcapng` or `data/B.pcapng` in Wireshark.
+2. Apply the display filters listed in `Challenge.pdf` for each CQ.
+3. For CQ4, register the MQTT-SN dissector on UDP port 1885 before filtering.
+4. For CQ8, run the embedded `cq8_plot.py` script from the repository root:
+   ```bash
+   python3 cq8_plot.py        # expects A.pcapng and B.pcapng in the working dir
+   ```
+
+## Course
+
+*Internet of Things* — Politecnico di Milano, ANTLab, A.Y. 2025–2026.
