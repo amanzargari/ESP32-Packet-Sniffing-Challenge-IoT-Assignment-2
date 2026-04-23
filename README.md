@@ -5,13 +5,6 @@ Solution to **Challenge #2** of the *Internet of Things* course at **Politecnico
 - **Part 1** — Analysis of two packet captures (`A.pcapng`, `B.pcapng`) with CoAP, MQTT and MQTT-SN traffic (questions CQ1–CQ8).
 - **Part 2** — Energy-consumption exercise comparing CoAP and MQTT for a battery-powered sensor/actuator pair (questions EQ1, EQ2).
 
-## Authors
-
-| Name | Person Code |
-|------|-------------|
-| Seyedaman Zargari | 11109586 |
-| Amirhossein Dibaj | 11109540 |
-
 ## Repository structure
 
 ```
