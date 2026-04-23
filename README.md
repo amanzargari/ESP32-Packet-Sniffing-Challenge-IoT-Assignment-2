@@ -9,7 +9,7 @@ Solution to **Challenge #2** of the *Internet of Things* course at **Politecnico
 
 ```
 .
-├── Challenge2.pdf        # Original challenge text (questions CQ1–CQ8, EQ1, EQ2)
+├── Challenge2-Brief.pdf        # Original challenge text (questions CQ1–CQ8, EQ1, EQ2)
 ├── Challenge.pdf         # Part 1 solution — PCAP analysis (CQ1–CQ8)
 ├── Exercise.pdf          # Part 2 solution — energy exercise (EQ1, EQ2)
 ├── data/
